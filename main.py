@@ -1,11 +1,10 @@
-from flask import Flask, url_for, request
-i = 0
+from flask import Flask, render_template
 app = Flask(__name__)
 
 
 @app.route("/")
 def root():
-    return "Миссия Колонизация Марса"
+    return render_template('base.html', title='Домашняя страница')
 
 
 @app.route("/index")
