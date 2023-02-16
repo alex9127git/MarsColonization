@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
-
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import db_session
-from users import User
-from jobs import Jobs
+
+
 app = Flask(__name__)
 
 
@@ -44,25 +43,37 @@ def registration_form():
         return file.read()
 
 
+@app.route("/load_photo", methods=["GET", "POST"])
+def load_photo():
+    with open("static/html/load_photo.html", "r", encoding="utf-8") as file:
+        if request.method == "GET":
+            return file.read().replace("{src}", "")
+        if request.method == "POST":
+            img = request.files["file"]
+            return file.read().replace("{src}", img.read())
+
+
+@app.route("/choice/<planet_name>")
+def choice(planet_name):
+    planet_name = planet_name.lower()
+    if planet_name == "марс":
+        planet_name = "mars"
+    if planet_name == "венера":
+        planet_name = "venus"
+    with open(f"static/html/{planet_name.lower()}.html", "r", encoding="utf-8") as file:
+        return file.read()
+
+
+@app.route("/results/<nickname>/<int:level>/<float:rating>")
+def results(nickname, level, rating):
+    with open(f"static/html/results.html", "r", encoding="utf-8") as file:
+        contents = file.read()
+        contents = contents.replace("{nickname}", nickname).replace("{level}", str(level)).\
+            replace("{rating}", str(rating))
+        return contents
+
+
 if __name__ == '__main__':
     db_session.global_init("db/mars_explorer.db")
     db_sess = db_session.create_session()
-    user = User()
-    user.surname = "Scott"
-    user.name = "Ridley"
-    user.age = 21
-    user.position = "captain"
-    user.speciality = "research engineer"
-    user.address = "module_1"
-    user.email = "scott_chief@mars.org"
-    user.hashed_password = "cap"
-    db_sess.add(user)
-    job = Jobs()
-    job.team_leader = 1
-    job.job = 'deployment of residential modules 1 and 2'
-    job.work_size = 15
-    job.collaborators = '2, 3'
-    job.is_finished = False
-    db_sess.add(job)
-    db_sess.commit()
     app.run(port=8080, host='127.0.0.1')
