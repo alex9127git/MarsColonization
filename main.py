@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import os
 from flask import Flask, render_template, request
 import db_session
 
@@ -47,10 +48,14 @@ def registration_form():
 def load_photo():
     with open("static/html/load_photo.html", "r", encoding="utf-8") as file:
         if request.method == "GET":
-            return file.read().replace("{src}", "")
+            return file.read().replace("{img}", "")
         if request.method == "POST":
-            img = request.files["file"]
-            return file.read().replace("{src}", img.read())
+            imgdata = request.files["file"]
+            if not os.path.exists("static/tmp"):
+                os.mkdir("static/tmp")
+            with open("static/tmp/tmp.png", "wb") as image:
+                image.write(imgdata.read())
+            return file.read().replace("{img}", '<img src="static/tmp/tmp.png" alt="">')
 
 
 @app.route("/choice/<planet_name>")

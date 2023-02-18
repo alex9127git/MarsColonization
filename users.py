@@ -16,7 +16,7 @@ class User(SqlAlchemyBase):
     email = Column(String, unique=True, nullable=True)
     hashed_password = Column(String, nullable=True)
     modified_date = Column(DateTime, default=datetime.datetime.now)
-    job = orm.relation("Jobs", back_populates="user")
+    job = orm.relationship("Jobs", back_populates="user")
 
     def __repr__(self):
         return f"{self.surname} {self.name} {self.age} {self.position} {self.speciality}\n" \
