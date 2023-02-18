@@ -58,6 +58,12 @@ def load_photo():
             return file.read().replace("{img}", '<img src="static/tmp/tmp.png" alt="">')
 
 
+@app.route("/mars_carousel")
+def mars_carousel():
+    with open(f"static/html/mars_carousel.html", "r", encoding="utf-8") as file:
+        return file.read()
+
+
 @app.route("/choice/<planet_name>")
 def choice(planet_name):
     planet_name = planet_name.lower()
