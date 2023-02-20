@@ -8,13 +8,14 @@ app = Flask(__name__)
 
 
 @app.route("/")
+@app.route("/index")
 def root():
     return render_template('base.html', title='Домашняя страница')
 
 
-@app.route("/index")
-def index():
-    return "И на Марсе яблони будут цвести!"
+@app.route("/list_prof/<list_type>")
+def list_prof(list_type):
+    return render_template('profession_list.html', title='Список профессий', list_type=list_type)
 
 
 @app.route("/promotion")
