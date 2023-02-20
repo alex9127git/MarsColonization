@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center">Анкета претендента</h2>
+<h3 align="center">на участие в миссии</h3>
+<div>
+    <form class="login_form" method="post">
+        <input type="text" class="form-control" id="name" placeholder="Введите имя" name="name">
+        <input type="text" class="form-control" id="surname" placeholder="Введите фамилию" name="surname">
+        <p></p>
+        <input type="email" class="form-control" id="email" placeholder="Введите адрес почты" name="email">
+        <p></p>
+        <div class="form-group">
+            <label for="eduSelect">Какое у Вас образование?</label>
+            <select class="form-control" id="eduSelect" name="education">
+                <option>Начальное</option>
+                <option>Основное общее</option>
+                <option>Среднее общее</option>
+                <option>Высшее</option>
+            </select>
+        </div>
+        <p></p>
+        <div class="form-group" id="professionSelect">
+            <label for="professionSelect">Какие профессии у Вас есть?</label>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="engineer" name="engineer" value="checked">
+                <label class="form-check-label" for="engineer">Инженер</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="pilot" name="pilot" value="checked">
+                <label class="form-check-label" for="pilot">Пилот</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="builder" name="builder" value="checked">
+                <label class="form-check-label" for="builder">Строитель</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="nurse" name="nurse" value="checked">
+                <label class="form-check-label" for="nurse">Врач</label>
+            </div>
+        </div>
+        <p></p>
+        <div class="form-group" id="sexSelect">
+            <label for="sexSelect">Укажите пол</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sex" id="male" value="male" checked>
+                <label class="form-check-label" for="male">Мужской</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sex" id="female" value="female">
+                <label class="form-check-label" for="female">Женский</label>
+            </div>
+        </div>
+        <p></p>
+        <div class="form-group">
+            <label for="motive">Почему вы хотите принять участие в миссии?</label>
+            <textarea class="form-control" id="motive" rows="5" name="motive"></textarea>
+        </div>
+        <p></p>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="acceptRules" name="accept" value="checked">
+            <label class="form-check-label" for="acceptRules">Готов остаться на Марсе</label>
+        </div>
+        <p></p>
+        <button type="submit" class="btn btn-primary">Отправить форму</button>
+    </form>
+</div>
+{% endblock %}

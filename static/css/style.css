@@ -1,6 +1,7 @@
-h1 {
-   color: #ff0000
+.error_message {
+    color: red
 }
+
 
 form.login_form {
     margin-left: auto;
