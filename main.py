@@ -50,25 +50,32 @@ def register():
                                stylesheet_path=url_for('static', filename='css/style.css'))
     elif request.method == 'POST':
         answers_param = {
+            "title": "Результаты заполнения анкеты",
             "name": request.form.get('name'),
             "surname": request.form.get('surname'),
             "email": request.form.get('email'),
             "education": request.form.get('education'),
-            "engineer": request.form.get('engineer') is not None,
-            "pilot": request.form.get('pilot') is not None,
-            "builder": request.form.get('builder') is not None,
-            "nurse": request.form.get('nurse') is not None,
             "sex": request.form.get('sex'),
             "motive": request.form.get('motive'),
-            "ready": request.form.get('accept') is not None
+            "ready": "да" if request.form.get('accept') is not None else "нет"
         }
+        professions = []
+        if request.form.get('engineer') is not None:
+            professions.append('инженер')
+        if request.form.get('pilot') is not None:
+            professions.append('пилот')
+        if request.form.get('builder') is not None:
+            professions.append('строитель')
+        if request.form.get('nurse') is not None:
+            professions.append('врач')
+        answers_param["professions"] = ", ".join(professions) if professions else "не выбрано"
         return redirect("/answer")
 
 
 @app.route("/answer")
 def answer():
     global answers_param
-    return render_template('answer.html')
+    return render_template('answer.html', **answers_param)
 
 
 @app.route("/load_photo", methods=["GET", "POST"])
