@@ -78,6 +78,13 @@ def answer():
     return render_template('answer.html', **answers_param)
 
 
+@app.route("/distribution")
+def distribution():
+    return render_template('distribution.html',
+                           members=["Readley Scott", "Andy Weer", "Mark Woatney",
+                                    "Wenkata Kapoor", "Teddy Sanders", "Shong Bing"])
+
+
 @app.route("/load_photo", methods=["GET", "POST"])
 def load_photo():
     with open("static/html/load_photo.html", "r", encoding="utf-8") as file:
