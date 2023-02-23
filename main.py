@@ -1,10 +1,13 @@
 # -*- encoding: utf-8 -*-
 import os
+import random
+from db_methods import fill_tables
 from flask import Flask, render_template, request, url_for, redirect
 import db_session
 
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = str(random.randrange(2 ** 64))
 answers_param = dict()
 
 
@@ -128,4 +131,5 @@ def results(nickname, level, rating):
 if __name__ == '__main__':
     db_session.global_init("db/mars_explorer.db")
     db_sess = db_session.create_session()
+    fill_tables(db_sess)
     app.run(port=8080, host='127.0.0.1')
