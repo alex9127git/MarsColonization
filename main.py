@@ -15,6 +15,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+@app.errorhandler(401)
+def unauthorized(error):
+    return redirect("/")
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db_sess.query(User).get(user_id)
