@@ -4,12 +4,13 @@ import random
 from db_methods import fill_tables
 from flask import Flask, render_template, request, url_for, redirect
 import db_session
+from forms import RegisterForm
 from jobs import Jobs
 from users import User
 
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(random.randrange(2 ** 64))
-answers_param = dict()
 
 
 @app.route("/")
@@ -48,43 +49,45 @@ def promotion_image():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    global answers_param
-    if request.method == 'GET':
-        return render_template('register.html', title='Анкета претендента на участие в миссии',
-                               stylesheet_path=url_for('static', filename='css/style.css'))
-    elif request.method == 'POST':
-        answers_param = {
-            "title": "Результаты заполнения анкеты",
-            "name": request.form.get('name'),
-            "surname": request.form.get('surname'),
-            "email": request.form.get('email'),
-            "education": request.form.get('education'),
-            "sex": request.form.get('sex'),
-            "motive": request.form.get('motive'),
-            "ready": "да" if request.form.get('accept') is not None else "нет"
-        }
-        professions = []
-        if request.form.get('engineer') is not None:
-            professions.append('инженер')
-        if request.form.get('pilot') is not None:
-            professions.append('пилот')
-        if request.form.get('builder') is not None:
-            professions.append('строитель')
-        if request.form.get('nurse') is not None:
-            professions.append('врач')
-        answers_param["professions"] = ", ".join(professions) if professions else "не выбрано"
-        return redirect("/answer")
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   stylesheet_path=url_for('static', filename='css/style.css'),
+                                   form=form, message="Пароли не совпадают")
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   stylesheet_path=url_for('static', filename='css/style.css'),
+                                   form=form, message="Такой пользователь уже есть")
+        user = User(
+            surname=form.surname.data,
+            name=form.name.data,
+            age=form.age.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data,
+            email=form.email.data,
+        )
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/register_success')
+    print(form.errors)
+    return render_template('register.html', title='Регистрация', form=form,
+                           stylesheet_path=url_for('static', filename='css/style.css'))
 
 
-@app.route("/answer")
-def answer():
-    global answers_param
-    return render_template('answer.html', **answers_param)
+@app.route("/register_success")
+def register_success():
+    return render_template('register_success.html', title='Успешная регистрация',
+                           stylesheet_path=url_for('static', filename='css/style.css'))
 
 
 @app.route("/distribution")
 def distribution():
     return render_template('distribution.html',
+                           title="Расположение персонала в каютах",
+                           stylesheet_path=url_for('static', filename='css/style.css'),
                            members=["Readley Scott", "Andy Weer", "Mark Woatney",
                                     "Wenkata Kapoor", "Teddy Sanders", "Shong Bing"])
 

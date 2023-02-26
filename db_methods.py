@@ -1,17 +1,18 @@
 from jobs import Jobs
 from users import User
+from werkzeug.security import generate_password_hash
 
 
 def fill_tables(session):
     if len(session.query(User).all()) == 0:
         add_user(session, "Scott", "Ridley", 21, "captain", "research engineer",
-                 "module 1", "scott_chief@mars.org", "VerY_5Tr0nG_P@Ssw0Rd")
+                 "module 1", "scott_chief@mars.org", generate_password_hash("VerY_5Tr0nG_P@Ssw0Rd"))
         add_user(session, "Andy", "Wheel", 23, "officer", "central pilot",
-                 "head module", "ma1n_wh33l@mars.org", "tH15_sh0UlD_Be_g0Od")
+                 "head module", "ma1n_wh33l@mars.org", generate_password_hash("tH15_sh0UlD_Be_g0Od"))
         add_user(session, "Mark", "Woatney", 35, "officer", "ship builder",
-                 "module 3", "m4rk_w0atney@mars.org", "mark343214231")
+                 "module 3", "m4rk_w0atney@mars.org", generate_password_hash("mark343214231"))
         add_user(session, "Teddy", "Sanders", 19, "chief", "surgeon",
-                 "head module", "t3ddySanders@mars.org", "why_do_i_exist")
+                 "head module", "t3ddySanders@mars.org", generate_password_hash("why_do_i_exist"))
     if len(session.query(Jobs).all()) == 0:
         add_job(session, 1, "deployment of residential modules 1 and 2", 15, "2, 3")
         add_job(session, 4, "heal injured people", 15, "1, 2")

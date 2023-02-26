@@ -1,6 +1,7 @@
 import datetime
 from sqlalchemy import Column, String, Integer, DateTime, orm
 from db_session import SqlAlchemyBase
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(SqlAlchemyBase):
@@ -21,3 +22,9 @@ class User(SqlAlchemyBase):
     def __repr__(self):
         return f"{self.surname} {self.name} {self.age} {self.position} {self.speciality}\n" \
                f"{self.address} {self.email} {self.hashed_password}"
+
+    def set_password(self, password):
+        self.hashed_password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.hashed_password, password)

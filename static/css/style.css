@@ -1,14 +1,33 @@
 .error_message {
-    color: red
+    color: red;
+}
+
+
+.success_message {
+    color: #44cc44;
 }
 
 
 form.login_form {
     margin-left: auto;
     margin-right: auto;
-    max-width: 450px;
-    background-color: #ffcc00;
-    border: 1px solid gray;
-    border-radius: 5px;
+    max-width: 800px;
+    background-color: #ffffff;
     padding: 10px;
+}
+
+
+th {
+    background-color: #cccccc;
+    border: 2px solid;
+    bordercolor: #000000;
+    padding: 5px;
+}
+
+
+td {
+    background-color: #ffffff;
+    border: 2px solid;
+    bordercolor: #000000;
+    padding: 5px;
 }
