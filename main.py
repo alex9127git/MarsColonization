@@ -4,13 +4,20 @@ import random
 from db_methods import fill_tables
 from flask import Flask, render_template, request, url_for, redirect
 import db_session
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm
 from jobs import Jobs
 from users import User
-
+from flask_login import LoginManager, login_user
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(random.randrange(2 ** 64))
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db_sess.query(User).get(user_id)
 
 
 @app.route("/")
@@ -59,6 +66,7 @@ def register():
             return render_template('register.html', title='Регистрация',
                                    stylesheet_path=url_for('static', filename='css/style.css'),
                                    form=form, message="Такой пользователь уже есть")
+        # noinspection PyArgumentList
         user = User(
             surname=form.surname.data,
             name=form.name.data,
@@ -71,9 +79,22 @@ def register():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/register_success')
-    print(form.errors)
+        return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form,
+                           stylesheet_path=url_for('static', filename='css/style.css'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/worklog")
+        return render_template('login.html', title="Авторизация", message="Неправильный логин или пароль", form=form,
+                               stylesheet_path=url_for('static', filename='css/style.css'))
+    return render_template('login.html', title='Авторизация', form=form,
                            stylesheet_path=url_for('static', filename='css/style.css'))
 
 
