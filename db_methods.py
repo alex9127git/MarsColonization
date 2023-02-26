@@ -1,3 +1,4 @@
+from jobs import Jobs
 from users import User
 
 
@@ -11,6 +12,10 @@ def fill_tables(session):
                  "module 3", "m4rk_w0atney@mars.org", "mark343214231")
         add_user(session, "Teddy", "Sanders", 19, "chief", "surgeon",
                  "head module", "t3ddySanders@mars.org", "why_do_i_exist")
+    if len(session.query(Jobs).all()) == 0:
+        add_job(session, 1, "deployment of residential modules 1 and 2", 15, "2, 3")
+        add_job(session, 4, "heal injured people", 15, "1, 2")
+        add_job(session, 3, "repair broken modules", 30, "2")
 
 
 def add_user(session, surname, name, age, position, specialty, address, email, password):
@@ -24,4 +29,15 @@ def add_user(session, surname, name, age, position, specialty, address, email, p
     user.email = email
     user.hashed_password = password
     session.add(user)
+    session.commit()
+
+
+def add_job(session, team_leader, job_name, work_size, collaborators):
+    job = Jobs()
+    job.team_leader = team_leader
+    job.job = job_name
+    job.work_size = work_size
+    job.collaborators = collaborators
+    job.is_finished = False
+    session.add(job)
     session.commit()
