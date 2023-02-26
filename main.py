@@ -4,10 +4,10 @@ import random
 from db_methods import fill_tables
 from flask import Flask, render_template, request, url_for, redirect
 import db_session
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, AddJobForm
 from jobs import Jobs
 from users import User
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_user, login_required, logout_user
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(random.randrange(2 ** 64))
@@ -25,33 +25,6 @@ def load_user(user_id):
 def root():
     return render_template('base.html', title='Домашняя страница',
                            stylesheet_path=url_for('static', filename='css/style.css'))
-
-
-@app.route("/list_prof/<list_type>")
-def list_prof(list_type):
-    return render_template('profession_list.html', title='Список профессий', list_type=list_type,
-                           stylesheet_path=url_for('static', filename='css/style.css'))
-
-
-@app.route("/promotion")
-def promotion():
-    return "</br>".join(("Человечество вырастает из детства.",
-                         "Человечеству мала одна планета.",
-                         "Мы сделаем обитаемыми безжизненные пока планеты.",
-                         "И начнем с Марса!",
-                         "Присоединяйся!"))
-
-
-@app.route("/image_mars")
-def image_mars():
-    with open("static/html/image_mars.html", "r", encoding="utf-8") as file:
-        return file.read()
-
-
-@app.route("/promotion_image")
-def promotion_image():
-    with open("static/html/promotion_image.html", "r", encoding="utf-8") as file:
-        return file.read()
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -98,19 +71,38 @@ def login():
                            stylesheet_path=url_for('static', filename='css/style.css'))
 
 
-@app.route("/register_success")
-def register_success():
-    return render_template('register_success.html', title='Успешная регистрация',
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@app.route("/list_prof/<list_type>")
+def list_prof(list_type):
+    return render_template('profession_list.html', title='Список профессий', list_type=list_type,
                            stylesheet_path=url_for('static', filename='css/style.css'))
 
 
-@app.route("/distribution")
-def distribution():
-    return render_template('distribution.html',
-                           title="Расположение персонала в каютах",
-                           stylesheet_path=url_for('static', filename='css/style.css'),
-                           members=["Readley Scott", "Andy Weer", "Mark Woatney",
-                                    "Wenkata Kapoor", "Teddy Sanders", "Shong Bing"])
+@app.route("/promotion")
+def promotion():
+    return "</br>".join(("Человечество вырастает из детства.",
+                         "Человечеству мала одна планета.",
+                         "Мы сделаем обитаемыми безжизненные пока планеты.",
+                         "И начнем с Марса!",
+                         "Присоединяйся!"))
+
+
+@app.route("/image_mars")
+def image_mars():
+    with open("static/html/image_mars.html", "r", encoding="utf-8") as file:
+        return file.read()
+
+
+@app.route("/promotion_image")
+def promotion_image():
+    with open("static/html/promotion_image.html", "r", encoding="utf-8") as file:
+        return file.read()
 
 
 @app.route("/load_photo", methods=["GET", "POST"])
@@ -153,11 +145,42 @@ def results(nickname, level, rating):
         return contents
 
 
+@app.route("/distribution")
+@login_required
+def distribution():
+    return render_template('distribution.html',
+                           title="Расположение персонала в каютах",
+                           stylesheet_path=url_for('static', filename='css/style.css'),
+                           members=["Readley Scott", "Andy Weer", "Mark Woatney",
+                                    "Wenkata Kapoor", "Teddy Sanders", "Shong Bing"])
+
+
 @app.route("/worklog")
+@login_required
 def worklog():
     return render_template("worklog.html", title="Журнал работы",
                            stylesheet_path=url_for('static', filename='css/style.css'),
                            jobs=db_sess.query(Jobs).all(), users=db_sess.query(User).all())
+
+
+@app.route("/add_job", methods=["GET", "POST"])
+@login_required
+def add_job():
+    form = AddJobForm()
+    if form.validate_on_submit():
+        # noinspection PyArgumentList
+        job = Jobs(
+            job=form.jobdesc.data,
+            team_leader=form.teamleader.data,
+            work_size=form.duration.data,
+            collaborators=form.collaborators.data,
+            is_finished=form.is_finished.data
+        )
+        db_sess.add(job)
+        db_sess.commit()
+        return redirect('/worklog')
+    return render_template('add_job.html', title='Добавление задания', form=form,
+                           stylesheet_path=url_for('static', filename='css/style.css'))
 
 
 if __name__ == '__main__':

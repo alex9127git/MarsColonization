@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center">Добавление задания</h2>
+<form class="login_form" method="post">
+    <div>
+        {{ form.csrf_token }}
+    </div>
+    {% set form_fields = [form.jobdesc, form.teamleader, form.duration, form.collaborators, form.is_finished] %}
+    {% for field in form_fields %}
+        {% if loop.last %}
+            <p>{{ form.is_finished() }} {{ form.is_finished.label }}</p>
+        {% else %}
+            {{ field.label }}<br>
+            {% set input_type = "text" %}
+            {{ field(class="form-control", type=input_type) }}<br>
+            {% for error in field.errors %}
+                <p class="alert alert-danger" role="alert">{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    <h6 class="error_message">{{ message }}</h6>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+</form>
+{% endblock %}
