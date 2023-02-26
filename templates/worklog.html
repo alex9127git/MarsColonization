@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 align="center">Журнал работ</h3>
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <th>Лидер задания</th>
+        <th>Название работы</th>
+        <th>Продолжительность задания</th>
+        <th>Помощники</th>
+        <th>Статус задания</th>
+    </tr>
+    {% for job in jobs %}
+    <tr>
+        <td>{{ job.id }}</td>
+        {% set leader = users[job.team_leader - 1] %}
+        <td>{{ leader.surname }} {{ leader.name }}</td>
+        <td>{{ job.job }}</td>
+        <td>{{ job.work_size }}</td>
+        <td>
+            {% for collaborator in job.collaborators.split(", ") %}
+                {% set user = users[collaborator|int - 1] %}
+                {{user.surname}} {{user.name}}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </td>
+        <td style="background-color: #{% if job.is_finished == 1 %}77FF77{% else %}FF7777{% endif %}">
+            {% if job.is_finished == 1 %}завершён{% else %}не завершён{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

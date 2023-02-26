@@ -4,7 +4,8 @@ import random
 from db_methods import fill_tables
 from flask import Flask, render_template, request, url_for, redirect
 import db_session
-
+from jobs import Jobs
+from users import User
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(random.randrange(2 ** 64))
@@ -126,6 +127,13 @@ def results(nickname, level, rating):
         contents = contents.replace("{nickname}", nickname).replace("{level}", str(level)).\
             replace("{rating}", str(rating))
         return contents
+
+
+@app.route("/worklog")
+def worklog():
+    return render_template("worklog.html", title="Журнал работы",
+                           stylesheet_path=url_for('static', filename='css/style.css'),
+                           jobs=db_sess.query(Jobs).all(), users=db_sess.query(User).all())
 
 
 if __name__ == '__main__':
